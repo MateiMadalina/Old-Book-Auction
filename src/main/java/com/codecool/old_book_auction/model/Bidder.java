@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Bidder {
     private final List<Book> books = new ArrayList<Book>();
+
     private final Topic favourite;
     private final Topic[] interested;
 
@@ -22,32 +23,52 @@ public class Bidder {
         this.name = "Bidder #"+ id;
     }
 
-    public boolean interested(Book book){
-        return false;
-        //TODO
+    public Topic getFavourite() {
+        return favourite;
     }
 
-    public boolean canBid(Book book, int currentPrice){
-        return false;
-        //TODO
+    public Topic[] getInterested() {
+        return interested;
     }
 
-    public Bid getBid(Book book, Bid currentBid){
-        return null;
-        //TODO
+    public double getCapital() {
+        return capital;
     }
 
-    private static int getBidPrice(int currentPrice, int threshold){
-        return 0;
-        //TODO
+    public int getId() {
+        return id;
     }
 
-    private int getThresholdPrice(Topic topic){
-        return 0;
-        //TODO
+    public String getName() {
+        return name;
     }
-
-    public void buyBook(Book book){
-        //TODO
-    }
+//
+//    public boolean interested(Book book){
+//        return false;
+//        //TODO
+//    }
+//
+//    public boolean canBid(Book book, int currentPrice){
+//        return false;
+//        //TODO
+//    }
+//
+//    public Bid getBid(Book book, Bid currentBid){
+//        return null;
+//        //TODO
+//    }
+//
+//    private static int getBidPrice(int currentPrice, int threshold){
+//        return 0;
+//        //TODO
+//    }
+//
+//    private int getThresholdPrice(Topic topic){
+//        return 0;
+//        //TODO
+//    }
+//
+//    public void buyBook(Book book){
+//        //TODO
+//    }
 }
