@@ -22,7 +22,7 @@ public class App {
             int minPrice,
             int maxPrice
     ) {
-        List<Book> books = new ArrayList<Book>();
+        List<Book> books = new ArrayList<>();
         for (int i = 0; i < bookCount; i++) {
             int price = (int)Math.floor(Math.random() * (maxPrice - minPrice + 1) + minPrice);
             books.add(new Book(i+1, "Book " + (i +1), getRandomTopic(), price));
@@ -54,7 +54,6 @@ public class App {
         }
         return bidders;
     }
-
     public static void main(String[] args) {
         final int bookCount = 20;
         final int minPrice = 100;
@@ -65,25 +64,27 @@ public class App {
         final int maximumCapital = 1000;
 
         List<Book> books = createBooks(bookCount, minPrice, maxPrice);
-
-//        for (Book book : books) {
-//            System.out.println("ID: " + book.getId());
-//            System.out.println("Title: " + book.getTitle());
-//            System.out.println("Topic: " + book.getTopic());
-//            System.out.println("Price: " + book.getPrice());
-//            System.out.println();
-//        }
-
         List<Bidder> bidders = createBidders(bidderCount, minimumCapital, maximumCapital);
-
-            for (Bidder bidder : bidders) {
-            System.out.println("ID: " + bidder.getId());
-            System.out.println("Name: " + bidder.getName());
-            System.out.println("Favorite: " + bidder.getFavourite());
-            System.out.println("Interested: " + Arrays.toString(bidder.getInterested()));
-            System.out.println("Capital: " + bidder.getCapital());
-            System.out.println();
+        List<Book> soldBooks = new ArrayList<>();
+        for (int i = 0; i < books.size(); i++) {
+            System.out.println(books.get(i).getTitle());
+            System.out.println(books.get(i).getTopic());
+            System.out.println(books.get(i).getPrice());
+            List<Bidder> buyers = new ArrayList<>();
+            for (int j = 0; j < bidders.size(); j++) {
+                if (bidders.get(j).interested(books.get(i))){
+                    System.out.println(bidders.get(j).getName() + " " + bidders.get(j).getFavourite() + " " + Arrays.toString(bidders.get(j).getInterested()));
+                    System.out.println("--------");
+                    if (bidders.get(j).canBid(books.get(i), books.get(i).getPrice())) {
+                        buyers.add(bidders.get(j));
+                    }
+                }
+            }
+            if (buyers.size() == 1){
+                soldBooks.add(books.get(i));
+            }
+//            System.out.println(buyers);
         }
-
+        System.out.println(soldBooks.size());
     }
 }

@@ -11,4 +11,7 @@ public class Bid {
         this.bidPrice = bidPrice;
     }
 
+    public double getBidPrice() {
+        return bidPrice;
+    }
 }
