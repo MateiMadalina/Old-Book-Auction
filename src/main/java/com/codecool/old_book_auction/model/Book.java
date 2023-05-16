@@ -4,9 +4,9 @@ public class Book {
     private final int id;
     private final String title;
     private final Topic topic;
-    private final int price;
+    private double price;
 
-    public Book(int id, String title, Topic topic, int price){
+    public Book(int id, String title, Topic topic, double price){
         this.id = id;
         this.title = title;
         this.topic = topic;
@@ -25,8 +25,11 @@ public class Book {
         return topic;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }

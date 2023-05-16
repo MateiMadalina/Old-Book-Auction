@@ -52,7 +52,7 @@ public class Bidder {
         return false;
     }
 
-    public boolean canBid(Book book, int currentPrice){
+    public boolean canBid(Book book, double currentPrice){
         if (this.favourite == book.getTopic() && (this.capital * 0.5) >= currentPrice){
             return true;
         } else if ((this.interested[0] == book.getTopic() || this.interested[1] == book.getTopic()) && (this.capital * 0.25) >= currentPrice) {
@@ -62,24 +62,34 @@ public class Bidder {
     }
 
     public Bid getBid(Book book, Bid currentBid){
-        Bidder bidder = new Bidder(this.id, this.capital, this.favourite, this.interested);
-        if (book.getPrice() == currentBid.getBidPrice()){
-            System.out.println("base price");
-            return new Bid(this.id, bidder, currentBid.getBidPrice());
-        } else {
+        //Bidder bidder = new Bidder(this.id, this.capital, this.favourite, this.interested);
             System.out.println("incremented bid");
-            return new Bid(this.id, bidder, currentBid.getBidPrice() + 50);
-        }
+            currentBid.setId(this.id);
+            currentBid.setBidder(this);
+            //calc threshold
+            double threshold = this.capital * getThresholdPrice(book.getTopic()) - currentBid.getBidPrice();
+            double bidPrice = getBidPrice(book.getPrice(),threshold);
+            currentBid.setBidPrice(bidPrice);
+            book.setPrice(bidPrice);
+            return currentBid;
     }
 
-    private static int getBidPrice(int currentPrice, int threshold){
-        return currentPrice;
+
+    //When pricing a bid, the bidder looks at the difference of its threshold (the max amount it's willing to pay) and the price,
+    // divides the range in half, and adds the result to the current price to outbid the most recent bidder.
+    private static double getBidPrice(double currentPrice, double threshold){
+        return currentPrice + threshold/2;
     }
-//
-//    private int getThresholdPrice(Topic topic){
-//        return 0;
-//    }
-//
+
+    private double getThresholdPrice(Topic topic){
+        if (this.favourite == topic ){
+            return 0.5;
+        } else if (this.interested[0] == topic || this.interested[1] == topic)  {
+            return 0.25;
+        }
+        return 0;
+    }
+
 //    public void buyBook(Book book){
 //    }
 
