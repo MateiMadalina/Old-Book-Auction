@@ -94,7 +94,20 @@ public class App {
                 soldBooks.add(book);
             }else if(buyers.size() > 1){
                int currentBidderIndex =  random.nextInt(0,buyers.size());
-               System.out.println(bidders.get(currentBidderIndex).getName() + " bids " + book.getPrice());
+               double currentBookPrice = book.getPrice();
+               System.out.println(buyers.get(currentBidderIndex).getName() + " bids " + currentBookPrice);
+               int nextBidderIndex =  random.nextInt(0,buyers.size());
+
+               while(nextBidderIndex == currentBidderIndex){
+                   nextBidderIndex =  random.nextInt(0,buyers.size());
+               }
+
+               buyers.get(nextBidderIndex).getBid(book,new Bid(buyers.get(nextBidderIndex).getId(),buyers.get(nextBidderIndex),currentBookPrice));
+                System.out.println("*************");
+                System.out.println(book.getTitle());
+                System.out.println(book.getTopic());
+                System.out.println(book.getPrice());
+
 //                try {
 //                    Thread.sleep(3000);
 //                } catch (InterruptedException e) {
@@ -102,10 +115,7 @@ public class App {
 //                    e.printStackTrace();
 //                }
             }
-//            System.out.println(buyers);
+
         }
-
-
-     //   System.out.println(soldBooks.size());
     }
 }

@@ -14,4 +14,16 @@ public class Bid {
     public double getBidPrice() {
         return bidPrice;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setBidder(Bidder bidder) {
+        this.bidder = bidder;
+    }
+
+    public void setBidPrice(double bidPrice) {
+        this.bidPrice = bidPrice;
+    }
 }
