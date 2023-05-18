@@ -91,15 +91,13 @@ public class Bidder {
         return 0;
     }
 
-//    public void buyBook(Book book){
-//    }
+    public void buyBook(Book book){
+        System.out.println(book.getTitle() + " sold to " + this.getName());
+    }
 
 
     @Override
     public String toString() {
-        return "Bidder{" +
-                "capital=" + capital +
-                ", name='" + name + '\'' +
-                '}';
+        return name + " | capital: " + capital;
     }
 }
