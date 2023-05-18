@@ -2,11 +2,7 @@ package com.codecool.old_book_auction;
 
 import com.codecool.old_book_auction.model.*;
 
-import java.util.Arrays;
-import java.util.Random;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class App {
 
@@ -14,64 +10,62 @@ public class App {
 
     public static Topic getRandomTopic() {
         Topic[] topics = Topic.values();
-        Random random = new Random();
         int randomIndex = random.nextInt(topics.length);
         return topics[randomIndex];
     }
 
-
-    private static List<Book> createBooks (
-            int bookCount,
-            int minPrice,
-            int maxPrice
-    ) {
+    private static List<Book> createBooks(int bookCount, int minPrice, int maxPrice) {
         List<Book> books = new ArrayList<>();
         for (int i = 0; i < bookCount; i++) {
-            int price = (int)Math.floor(Math.random() * (maxPrice - minPrice + 1) + minPrice);
-            books.add(new Book(i+1, "Book " + (i +1), getRandomTopic(), price));
+            int price = (int) Math.floor(Math.random() * (maxPrice - minPrice + 1) + minPrice);
+            books.add(new Book(i + 1, "Book " + (i + 1), getRandomTopic(), price));
         }
         return books;
     }
 
-    private static List<Bidder> createBidders (
-            int bidderCount,
-            int minimumCapital,
-            int maximumCapital
-    ) {
-        List<Bidder> bidders = new ArrayList<Bidder>();
-        for(int i = 0; i < bidderCount; i++) {
-            double capital = (double)Math.floor(Math.random() * (maximumCapital - minimumCapital + 1) + minimumCapital);
+    private static List<Bidder> createBidders(int bidderCount, int minimumCapital, int maximumCapital) {
+        List<Bidder> bidders = new ArrayList<>();
+        for (int i = 0; i < bidderCount; i++) {
+            int capital = (int) Math.floor(Math.random() * (maximumCapital - minimumCapital + 1) + minimumCapital);
             Topic favoriteTopic = getRandomTopic();
 
             Topic[] topicsOfInterest = new Topic[2];
             for (int j = 0; j < topicsOfInterest.length; j++) {
                 topicsOfInterest[j] = getRandomTopic();
-                if(topicsOfInterest[j] == favoriteTopic) {
+                if (topicsOfInterest[j] == favoriteTopic) {
                     j--;
                 }
-                if(topicsOfInterest[0] == topicsOfInterest[1]) {
+                if (topicsOfInterest[0] == topicsOfInterest[1]) {
                     j--;
                 }
             }
-            bidders.add(new Bidder(i+1, capital, favoriteTopic, topicsOfInterest));
+            bidders.add(new Bidder(i + 1, capital, favoriteTopic, topicsOfInterest));
         }
         return bidders;
     }
 
-    public static List<Bidder> filterBuyers(List<Bidder> bidders,Book book) {
+    public static List<Bidder> filterBuyers(List<Bidder> bidders, Book book) {
         List<Bidder> buyers = new ArrayList<>();
         for (Bidder bidder : bidders) {
             if (bidder.interested(book)) {
-                System.out.println(bidder.getName() + " " + bidder.getFavourite() + " " + Arrays.toString(bidder.getInterested()));
-                System.out.println("--------");
                 if (bidder.canBid(book, book.getPrice())) {
                     buyers.add(bidder);
                 }
-                System.out.println(buyers);
             }
         }
         return buyers;
     }
+
+    public static Book randomBookForBid(List<Book> books) {
+        int randomIndex = random.nextInt(books.size());
+        return books.get(randomIndex);
+    }
+
+    public static Bidder randomBidTurn(List<Bidder> bidders) {
+        int randomIndex = random.nextInt(bidders.size());
+        return bidders.get(randomIndex);
+    }
+
     public static void main(String[] args) {
         final int bookCount = 20;
         final int minPrice = 100;
@@ -83,39 +77,67 @@ public class App {
 
         List<Book> books = createBooks(bookCount, minPrice, maxPrice);
         List<Bidder> bidders = createBidders(bidderCount, minimumCapital, maximumCapital);
-        List<Book> soldBooks = new ArrayList<>();
-        for (Book book : books) {
-            System.out.println(book.getTitle());
-            System.out.println(book.getTopic());
-            System.out.println(book.getPrice());
 
-            List<Bidder> buyers =  filterBuyers(bidders,book);
-            if (buyers.size() == 1) {
-                soldBooks.add(book);
-            }else if(buyers.size() > 1){
-               int currentBidderIndex =  random.nextInt(0,buyers.size());
-               double currentBookPrice = book.getPrice();
-               System.out.println(buyers.get(currentBidderIndex).getName() + " bids " + currentBookPrice);
-               int nextBidderIndex =  random.nextInt(0,buyers.size());
+        while (books.size() > 0) {
+            Book randomBook = randomBookForBid(books);
+            books.remove(randomBook);
 
-               while(nextBidderIndex == currentBidderIndex){
-                   nextBidderIndex =  random.nextInt(0,buyers.size());
-               }
+            // Afisare detalii carte:
+            System.out.println("Carte pentru licitație: " + randomBook.getTitle());
+            System.out.println("Tema cărții: " + randomBook.getTopic());
+            System.out.println("Prețul cărții: " + randomBook.getPrice());
 
-               buyers.get(nextBidderIndex).getBid(book,new Bid(buyers.get(nextBidderIndex).getId(),buyers.get(nextBidderIndex),currentBookPrice));
-                System.out.println("*************");
-                System.out.println(book.getTitle());
-                System.out.println(book.getTopic());
-                System.out.println(book.getPrice());
+            // Vrem să vedem cumpărătorii interesați de carte:
+            List<Bidder> buyers = filterBuyers(bidders, randomBook);
+            System.out.println("Potentiali cumpărători: " + buyers);
 
-//                try {
-//                    Thread.sleep(3000);
-//                } catch (InterruptedException e) {
-//                    // Handle the interrupted exception
-//                    e.printStackTrace();
-//                }
+            if (buyers.size() > 0) {
+                Bidder currentBidder = randomBidTurn(buyers);
+                Bid currentBid = new Bid(currentBidder.getId(), currentBidder, randomBook.getPrice());
+
+                System.out.println("Licitatorul curent: " + currentBidder.getName());
+                System.out.println("Oferta curentă: " + currentBid.getBidPrice());
+
+                Bidder winner = null;
+
+                boolean continueBidding = true;
+
+                while (continueBidding) {
+                    continueBidding = false; // Vom verifica dacă există un licitator care poate continua licitația
+                    int highestBid = currentBid.getBidPrice(); // Cea mai mare ofertă curentă
+
+                    for (Bidder bidder : buyers) {
+                        if (bidder != currentBidder) {
+                            Bid newBid = bidder.getBid(randomBook, currentBid);
+                            if (newBid.getBidPrice() > highestBid) {
+                                highestBid = newBid.getBidPrice();
+                                currentBidder = bidder; // Actualizare licitator curent
+                                winner = bidder;
+                                System.out.println("Noua cea mai mare ofertă: " + highestBid);
+                                System.out.println("Licitatorul curent: " + bidder.getName());
+                                continueBidding = true; // Setăm continuarea licitației
+                            } else {
+                                continueBidding = false;
+                            }
+                        }
+                    }
+                }
+
+                if (winner == null) {
+                    winner = currentBidder; // Assign currentBidder as the winner
+                }
+
+                // Licitația s-a încheiat, cartea este vândută
+                System.out.println("Cartea a fost vândută lui " + winner.getName());
+                System.out.println("\n");
+                winner.setCapital(winner.getCapital() - randomBook.getPrice());
+            } else {
+                System.out.println("Cartea nu a fost vândută");
+                System.out.println("----------------------");
             }
-
         }
+
+        List<Book> soldBooks = new ArrayList<>();
     }
+
 }

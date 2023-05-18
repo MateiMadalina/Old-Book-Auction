@@ -9,13 +9,13 @@ public class Bidder {
     private final Topic favourite;
     private final Topic[] interested;
 
-    private double capital;
+    private int capital;
 
     private int id;
     private String name;
 
 
-    public Bidder(int id, double capital, Topic favourite, Topic[] interested){
+    public Bidder(int id, int capital, Topic favourite, Topic[] interested){
         this.id = id;
         this.capital = capital;
         this.favourite = favourite;
@@ -31,7 +31,7 @@ public class Bidder {
         return interested;
     }
 
-    public double getCapital() {
+    public int getCapital() {
         return capital;
     }
 
@@ -43,6 +43,10 @@ public class Bidder {
         return name;
     }
 
+    public void setCapital(int capital) {
+        this.capital = capital;
+    }
+
     public boolean interested(Book book){
         if (this.favourite == book.getTopic()){
             return true;
@@ -52,7 +56,7 @@ public class Bidder {
         return false;
     }
 
-    public boolean canBid(Book book, double currentPrice){
+    public boolean canBid(Book book, int currentPrice){
         if (this.favourite == book.getTopic() && (this.capital * 0.5) >= currentPrice){
             return true;
         } else if ((this.interested[0] == book.getTopic() || this.interested[1] == book.getTopic()) && (this.capital * 0.25) >= currentPrice) {
@@ -62,13 +66,10 @@ public class Bidder {
     }
 
     public Bid getBid(Book book, Bid currentBid){
-        //Bidder bidder = new Bidder(this.id, this.capital, this.favourite, this.interested);
-            System.out.println("incremented bid");
             currentBid.setId(this.id);
             currentBid.setBidder(this);
-            //calc threshold
-            double threshold = this.capital * getThresholdPrice(book.getTopic()) - currentBid.getBidPrice();
-            double bidPrice = getBidPrice(book.getPrice(),threshold);
+            int threshold = this.capital / getThresholdPrice(book.getTopic()) - currentBid.getBidPrice();
+            int bidPrice = getBidPrice(book.getPrice(),threshold);
             currentBid.setBidPrice(bidPrice);
             book.setPrice(bidPrice);
             return currentBid;
@@ -77,15 +78,15 @@ public class Bidder {
 
     //When pricing a bid, the bidder looks at the difference of its threshold (the max amount it's willing to pay) and the price,
     // divides the range in half, and adds the result to the current price to outbid the most recent bidder.
-    private static double getBidPrice(double currentPrice, double threshold){
+    private static int getBidPrice(int currentPrice, int threshold){
         return currentPrice + threshold/2;
     }
 
-    private double getThresholdPrice(Topic topic){
+    private int getThresholdPrice(Topic topic){
         if (this.favourite == topic ){
-            return 0.5;
+            return 2;
         } else if (this.interested[0] == topic || this.interested[1] == topic)  {
-            return 0.25;
+            return 4;
         }
         return 0;
     }
