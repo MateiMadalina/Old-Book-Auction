@@ -92,7 +92,9 @@ public class Bidder {
     }
 
     public void buyBook(Book book){
-        System.out.println(book.getTitle() + " sold to " + this.getName());
+        System.out.println("Going once...");
+        System.out.println("Going twice...");
+        System.out.println(book.getTitle() + " SOLD to " + this.getName() + "!!!");
     }
 
 

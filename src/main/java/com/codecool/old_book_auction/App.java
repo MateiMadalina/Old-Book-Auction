@@ -66,52 +66,59 @@ public class App {
         return bidders.get(randomIndex);
     }
 
-    private static void startAuction (List<Book> books, List<Bidder> bidders, List<Book> soldBooks, List<Book> notSoldBooks){
+    public static void displayBuyers(List<Bidder>buyers) {
+        if(buyers.size() > 0) {
+            System.out.println("Interested buyers: " + buyers);
+        } else {
+            System.out.println("No interested buyers.");
+        }
+    }
+
+    private static void startAuction(List<Book> books, List<Bidder> bidders, List<Book> soldBooks, List<Book> notSoldBooks) {
         while (books.size() > 0) {
             Book currentRandomBook = randomBookForBid(books);
             books.remove(currentRandomBook);
 
-            // Afisare detalii carte:
-            System.out.println("Carte pentru licitație: " + currentRandomBook.getTitle());
-            System.out.println("Tema cărții: " + currentRandomBook.getTopic());
-            System.out.println("Prețul cărții: " + currentRandomBook.getPrice());
+            System.out.println(
+                    "Currently on auction: " + currentRandomBook.getTitle() + "\n"
+                            + "On the topic: " + currentRandomBook.getTopic() + "\n"
+                            + "With the starting bid: " + currentRandomBook.getPrice());
+            System.out.println("-------------------------------------------------------");
 
-            // Vrem să vedem cumpărătorii interesați de carte:
             List<Bidder> buyers = filterBuyers(bidders, currentRandomBook);
-            System.out.println("Potentiali cumpărători: " + buyers);
+            displayBuyers(buyers);
+            System.out.println("-------------------------------------------------------");
 
             checkIfBuyers(buyers, currentRandomBook, soldBooks, notSoldBooks);
         }
     }
 
-    private static void checkIfBuyers(List<Bidder> buyers, Book currentRandomBook, List<Book> soldBooks, List<Book> notSoldBooks){
+    private static void checkIfBuyers(List<Bidder> buyers, Book currentRandomBook, List<Book> soldBooks, List<Book> notSoldBooks) {
         if (buyers.size() > 0) {
             Bidder currentBidder = randomBidTurn(buyers);
             Bid currentBid = new Bid(currentBidder.getId(), currentBidder, currentRandomBook.getPrice());
 
-            System.out.println("Licitatorul curent: " + currentBidder.getName());
-            System.out.println("Oferta curentă: " + currentBid.getBidPrice());
+            System.out.println("The first bidder is " + currentBidder.getName() + " with the offer " + currentBid.getBidPrice());
 
             Bidder winner = auctionProcess(currentBid, buyers, currentBidder, currentRandomBook);
 
             if (winner == null) {
-                winner = currentBidder; // Assign currentBidder as the winner
+                winner = currentBidder;
             }
 
-            // Licitația s-a încheiat, cartea este vândută
-//            System.out.println("Cartea a fost vândută lui " + winner.getName());
             winner.buyBook(currentRandomBook);
-            System.out.println("\n");
+
             winner.setCapital(winner.getCapital() - currentRandomBook.getPrice());
             soldBooks.add(currentRandomBook);
+            System.out.println("\n");
         } else {
-            System.out.println("Cartea nu a fost vândută");
-            System.out.println("----------------------");
+            System.out.println("The book was not sold");
+            System.out.println("\n");
             notSoldBooks.add(currentRandomBook);
         }
     }
 
-    public static Bidder auctionProcess (Bid currentBid, List<Bidder> bidders, Bidder currentBidder, Book currentRandomBook){
+    public static Bidder auctionProcess(Bid currentBid, List<Bidder> bidders, Bidder currentBidder, Book currentRandomBook) {
         Bidder winner = null;
         boolean continueBidding = true;
         while (continueBidding) {
@@ -125,8 +132,7 @@ public class App {
                         highestBid = newBid.getBidPrice();
                         currentBidder = bidder;
                         winner = bidder;
-                        System.out.println("Noua cea mai mare ofertă: " + highestBid);
-                        System.out.println("Licitatorul curent: " + bidder.getName());
+                        System.out.println(bidder.getName() + " offers " + highestBid);
                         continueBidding = true;
                     } else {
                         continueBidding = false;
